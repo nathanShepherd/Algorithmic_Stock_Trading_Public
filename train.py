@@ -171,23 +171,18 @@ class Env():
         
         return self.data[self.time_step], reward, terminal, label
 
-def convert_to_obs(sample, step_size= 5, poly_deg=3, binary=True):
+def convert_to_obs(sample, step_size= 5):
     #Convert the raw share price into a more informative vector
     #print("Fitting polynomials and converting observation vector")
     x = [i for i in range(step_size)]
     outs = []
     for i in range(len(sample) - step_size):
         y = sample[i : i + step_size]
-        coef = np.polyfit(x, y, poly_deg)
-        funct = np.poly1d(coef)
+        
+        mean_val = np.tanh(np.mean(y)/100)
+        actual = np.tanh(y[-1]/100)
 
-        if binary: concavity = int(coef[0] <= 0)
-        else: concavity = np.tanh(coef[0])
-        #range_val = np.tanh(max(y) - min(y))
-        #next_val = np.tanh(funct(step_size + 1)/100)
-        #actual = np.tanh(y[-1]/100)
-
-        obs_vect = [concavity]#, next_val, range_val, actual]
+        obs_vect = [mean_val, actual]
         outs.append(obs_vect)
         
     return outs
@@ -255,7 +250,7 @@ def ML(data):
     for i, d in enumerate(data):
         perc_done = i*100/(len(data))
         if int(perc_done) % 5 == 0: print(perc_done)
-        tanh_data.append(convert_to_obs(d, binary=False))
+        tanh_data.append(convert_to_obs(d))
         
     train, test = split(tanh_data, ratio = 0.8)
     for i, episode in enumerate(train):
@@ -266,9 +261,9 @@ def ML(data):
 
         actions = [2]
         while not terminal:
-            if state[0] <= 0:
+            if state[1] > state[0]:
                 #label = ['Buy', 'Sell', 'Hold'][action]
-                if random.random() <= 0.99: action = 0
+                if random.random() <= 0.3: action = 0
                 else: action = 1
                 state, reward, terminal, label = env.step(action)
             else:
