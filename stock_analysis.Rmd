@@ -1,0 +1,56 @@
+---
+title: "stock_analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+library(readr)
+NVDA <- read_csv("sp500stock_dfs/NVDA.csv")
+UPS <- read_csv("sp500stock_dfs/UPS.csv")
+
+
+# 2 year data
+row = 1:500
+col = 1:2 # date and high
+plot(NVDA[row,col])
+plot(UPS[row,col])
+
+hist(NVDA$High[row])
+hist(UPS$High[row])
+
+sample_pop = UPS$High[row]
+rUPS = rnorm(length(row), 
+             mean= mean(sample_pop),
+             sd = sd(sample_pop))
+hist(rUPS)
+plot(row, rUPS)
+```
+
+```{r}
+#folder =
+temp = list.files(pattern= "*.csv")
+myfiles = lapply(temp, read.delim)
+```
+
+```{r}
+map_df_read.csv <- function(path, pattern = "*.csv") {
+    list.files(path, pattern, full.names = TRUE) %>% 
+    map_df(~read.csv(., stringsAsFactors = FALSE))
+}
+
+map_df_read.csv(".")
+```
+
+```{r}
+rbindlist_fread <- function(path, pattern = "*.csv") {
+    files = list.files(path, pattern, full.names = TRUE)
+    rbindlist(lapply(files, function(x) fread(x)))
+}
+rbindlist_fread(".")
+```
+
