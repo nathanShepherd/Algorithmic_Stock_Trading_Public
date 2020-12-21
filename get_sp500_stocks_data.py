@@ -121,7 +121,7 @@ def visualize_data():
 
 def save_summary_graph():
     np.random.seed(406)
-    df = pd.read_csv('sp500_joined_Closed_prices.csv')
+    df = pd.read_csv('joined_df_stats/sp500_joined_Closed_prices.csv')
 
     dates = df.iloc[:, 0]
     values = df.iloc[:,1:].interpolate(axis="columns").values
@@ -155,11 +155,16 @@ def save_summary_graph():
     compile_df["rand_norm"] = compile_df["rand_norm"].rolling(100).sum()
     compile_df["rand_poisson"] = compile_df["rand_poisson"].rolling(100).sum()
     #compile_df.iloc[:-400].plot()
+    '''
     compile_df.plot()
     plt.title("Random Walk Dist. Comparison")
     plt.tight_layout()
     plt.savefig("normalized_rowise_comparison.png", dpi = (300))
+    '''
 
+    plt.title("Normalized daily mean of S&P Histogram")
+    compile_df['mean_sp'].plot.hist()
+    plt.savefig("normalized_hist_sp.png", dpi = (300))
     print(compile_df.describe())
     
 
