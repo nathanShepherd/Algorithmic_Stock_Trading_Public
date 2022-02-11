@@ -20,10 +20,10 @@ col = 1:2 # date and high
 plot(NVDA[row,col])
 plot(UPS[row,col])
 
-hist(NVDA$High[row])
-hist(UPS$High[row])
+hist(NVDA$Close[row])
+hist(UPS$Close[row])
 
-sample_pop = UPS$High[row]
+sample_pop = UPS$Close[row]
 rUPS = rnorm(length(row), 
              mean= mean(sample_pop),
              sd = sd(sample_pop))
